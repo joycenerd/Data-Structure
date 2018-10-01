@@ -8,15 +8,133 @@
 
 #include <stdio.h>
 #include <assert.h>
+#include <stdlib.h>
+#include <string.h>
 #define N 200
+typedef unsigned long int ui;
 
-void readfile(){
+typedef struct{
+    char name[N];
+    int index;
+}Data;
+
+Data memory(Data *mydata,int size){
+    size*=2;
+    Data *reallstruct=realloc(mydata,size*sizeof(Data));
+    mydata=reallstruct;
+    return *mydata;
+}
+
+int *failFunc(char *pattern,ui len){
+    int i,j;
+    static int fail[N];
+    fail[0]=0;
+    char head=pattern[0];
+    for(i=1;i<len;i++){
+        if(fail[i-1]==0){
+            if(pattern[i]==head) fail[i]=1;
+            else fail[i]=0;
+        }
+        else{
+            j=i-1;
+            int index=0;
+            while(j>=1){
+                if(fail[j]==1){
+                    index=j;
+                    break;
+                }
+                j--;
+            }
+            int sectionlen=i-index+1;
+            if(strncmp(pattern,pattern+index,sectionlen)==0) fail[i]=sectionlen;
+            else{
+                int flag=0;
+                for(j=index+1;j<i;j++){
+                    if(pattern[j]==head){
+                        sectionlen=i-j+1;
+                        if(strncmp(pattern,pattern+j,sectionlen)==0){
+                            fail[i]=sectionlen;
+                            flag=1;
+                            break;
+                        }
+                    }
+                }
+                if(flag==0){
+                    if(pattern[i]==head) fail[i]=1;
+                    else fail[i]=0;
+                }
+            }
+        }
+    }
+    return fail;
+}
+
+void popData(char *string){
+    printf("enter your searching pattern: ");
+    char pattern[N];
+    scanf("%s",pattern);
+    ui patlen=strlen(pattern);
+    int *lsp;
+    lsp=failFunc(pattern, patlen);
+    for(int i=0;i<patlen;i++){
+        printf("%d\n",*(lsp+i));
+    }
+}
+
+Data splitLine(char *string,Data *mydata,int cur){
+    char *token[2];
+    token[0]=strtok(string,",\0");
+    if(token[0]!=NULL) token[1]=strtok(NULL,",\0");
+    strcpy(mydata[cur].name,token[0]);
+    mydata[cur].index=atoi(token[1]);
+    return *mydata;
+}
+
+char *constructString(Data *data,int howmany){
+    int i;
+    int strsize=9;
+    char *mainstring=malloc(strsize*sizeof(char));
+    int insertindex=0,charcount=0;
+    for(i=0;i<howmany;i++){
+        printf("name: %s\n",data[i].name);
+        printf("next position: %d\n",data[i].index);
+        ui len=strlen(data[i].name);
+        if((charcount+len)>=strsize){
+            strsize*=2;
+            char *reallstr=realloc(mainstring,strsize*sizeof(char));
+            mainstring=reallstr;
+        }
+        char *tempstr=malloc(strsize*sizeof(char));
+        strncpy(tempstr,mainstring,strsize);
+        strncpy(mainstring, tempstr, insertindex);
+        strncpy(mainstring+insertindex,data[i].name,len);
+        strcpy(mainstring+insertindex+len, tempstr+insertindex);
+        printf("mainstring after insertion: %s\n",mainstring);
+        printf("========================================================\n");
+        charcount+=len;
+        insertindex=data[i].index;
+    }
+    return mainstring;
+}
+
+char *readfile(){
     printf("enter your filename and path: ");
     char filename[N];
     scanf("%s",filename);
     FILE *file;
     file=fopen(filename,"r");
     assert(file!=NULL);
+    char line[N];
+    int structsize=1;
+    int counting=0;
+    Data *data=malloc(structsize*sizeof(Data));
+    while(fgets(line,N,file)!=NULL){
+        if(counting==structsize) *data=memory(data,structsize);
+        *data=splitLine(line,data,counting);
+        counting++;
+    }
+    char *mymainstring=constructString(data,counting);
+    return mymainstring;
 }
 
 
@@ -36,8 +154,17 @@ int menu()
 int main()
 {
     int choice=menu();
-    if(choice==1){
-        readfile();
+    while(1){
+        if(choice==1){
+            char *maintring=readfile();
+            while(1){
+                printf("\n");
+                choice=menu();
+                if(choice==1) printf("You must first exit to input other data\n");
+                else if(choice==2) printf("You must first exit to input other data\n");
+                else if(choice==3) popData(maintring);
+            }
+        }
     }
-    
+    return 0;
 }
