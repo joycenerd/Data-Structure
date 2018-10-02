@@ -69,6 +69,32 @@ int *failFunc(char *pattern,ui len){
     return fail;
 }
 
+int KMPmatcher(char *string, char *pattern, int failure[]){
+    ui stringlen=strlen(string);
+    ui patlen=strlen(pattern);
+    int strindex=0,patindex=0;
+    while(strindex<stringlen && patindex<patlen){
+        if(string[strindex]==pattern[patindex]){
+            strindex++;patindex++;
+        }
+        else if(patindex==0) strindex++;
+        else patindex=failure[patindex-1];
+    }
+    if(patindex==patlen){
+        int location=strindex-(int)patlen;
+        return location;
+    }
+    else return -1;
+}
+
+char *deleteString(char *string, int index, ui delsize){
+    ui size=strlen(string);
+    char *newstring=malloc(size*sizeof(char));
+    strncpy(newstring,string,index);
+    strcpy(newstring+index,string+index+delsize);
+    return newstring;
+}
+
 void popData(char *string){
     printf("enter your searching pattern: ");
     char pattern[N];
@@ -76,9 +102,15 @@ void popData(char *string){
     ui patlen=strlen(pattern);
     int *lsp;
     lsp=failFunc(pattern, patlen);
+    printf("lsp= [");
     for(int i=0;i<patlen;i++){
-        printf("%d\n",*(lsp+i));
+        if (i==0) printf("%d",*(lsp+i));
+        else printf(", %d",*(lsp+i));
     }
+    printf("]\n");
+    int index=KMPmatcher(string, pattern, lsp);
+    char *remainstr=deleteString(string,index,patlen);
+    printf("the remaining string is: %s\n",remainstr);
 }
 
 Data splitLine(char *string,Data *mydata,int cur){
