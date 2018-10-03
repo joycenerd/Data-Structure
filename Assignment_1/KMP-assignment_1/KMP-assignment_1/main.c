@@ -109,7 +109,9 @@ void popData(char *string){
     }
     printf("]\n");
     int index=KMPmatcher(string, pattern, lsp);
-    char *remainstr=deleteString(string,index,patlen);
+    char *remainstr = NULL;
+    if(index==-1) remainstr=deleteString(string,0,0);
+    else remainstr=deleteString(string,index,patlen);
     printf("the remaining string is: %s\n",remainstr);
 }
 
@@ -147,6 +149,11 @@ char *constructString(Data *data,int howmany){
         insertindex=data[i].index;
     }
     return mainstring;
+}
+
+void inputData(){
+    int i;
+    printf("over");
 }
 
 char *readfile(){
@@ -187,6 +194,7 @@ int main()
 {
     int choice=menu();
     while(1){
+        int over=0;
         if(choice==1){
             char *maintring=readfile();
             while(1){
@@ -195,8 +203,19 @@ int main()
                 if(choice==1) printf("You must first exit to input other data\n");
                 else if(choice==2) printf("You must first exit to input other data\n");
                 else if(choice==3) popData(maintring);
+                else if(choice==4){
+                    over=1;
+                    break;
+                }
+                else printf("There is no this choice\n");
             }
+            if(over) break;
         }
+        else if(choice==2){
+            inputData();
+            break;
+        }
+        
     }
     return 0;
 }
