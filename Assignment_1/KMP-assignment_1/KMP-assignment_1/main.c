@@ -13,16 +13,36 @@
 #define N 200
 typedef unsigned long int ui;
 
+
 typedef struct{
     char name[N];
     int index;
 }Data;
 
-Data memory(Data *mydata,int size){
-    size*=2;
-    Data *reallstruct=realloc(mydata,size*sizeof(Data));
-    mydata=reallstruct;
-    return *mydata;
+char *deleteString(char *string, int index, ui delsize){
+    ui size=strlen(string);
+    char *newstring=malloc(size*sizeof(char));
+    strncpy(newstring,string,index);
+    strcpy(newstring+index,string+index+delsize);
+    return newstring;
+}
+
+int KMPmatcher(char *string, char *pattern, int failure[]){
+    ui stringlen=strlen(string);
+    ui patlen=strlen(pattern);
+    int strindex=0,patindex=0;
+    while(strindex<stringlen && patindex<patlen){
+        if(string[strindex]==pattern[patindex]){
+            strindex++;patindex++;
+        }
+        else if(patindex==0) strindex++;
+        else patindex=failure[patindex-1];
+    }
+    if(patindex==patlen){
+        int location=strindex-(int)patlen;
+        return location;
+    }
+    else return -1;
 }
 
 int *failFunc(char *pattern,ui len){
@@ -69,32 +89,6 @@ int *failFunc(char *pattern,ui len){
     return fail;
 }
 
-int KMPmatcher(char *string, char *pattern, int failure[]){
-    ui stringlen=strlen(string);
-    ui patlen=strlen(pattern);
-    int strindex=0,patindex=0;
-    while(strindex<stringlen && patindex<patlen){
-        if(string[strindex]==pattern[patindex]){
-            strindex++;patindex++;
-        }
-        else if(patindex==0) strindex++;
-        else patindex=failure[patindex-1];
-    }
-    if(patindex==patlen){
-        int location=strindex-(int)patlen;
-        return location;
-    }
-    else return -1;
-}
-
-char *deleteString(char *string, int index, ui delsize){
-    ui size=strlen(string);
-    char *newstring=malloc(size*sizeof(char));
-    strncpy(newstring,string,index);
-    strcpy(newstring+index,string+index+delsize);
-    return newstring;
-}
-
 void popData(char *string){
     printf("enter your searching pattern: ");
     char pattern[N];
@@ -115,18 +109,10 @@ void popData(char *string){
     printf("the remaining string is: %s\n",remainstr);
 }
 
-Data splitLine(char *string,Data *mydata,int cur){
-    char *token[2];
-    token[0]=strtok(string,",\0");
-    if(token[0]!=NULL) token[1]=strtok(NULL,",\0");
-    strcpy(mydata[cur].name,token[0]);
-    mydata[cur].index=atoi(token[1]);
-    return *mydata;
-}
-
 char *constructString(Data *data,int howmany){
+    printf("\n");
     int i;
-    int strsize=9;
+    int strsize=20;
     char *mainstring=malloc(strsize*sizeof(char));
     int insertindex=0,charcount=0;
     for(i=0;i<howmany;i++){
@@ -151,25 +137,42 @@ char *constructString(Data *data,int howmany){
     return mainstring;
 }
 
+Data memory(Data *mydata,int size){
+    size*=2;
+    Data *reallstruct=realloc(mydata,size*sizeof(Data));
+    mydata=reallstruct;
+    return *mydata;
+}
+
 char *inputData(){
-    char name[N],yn[N]="0";
+    char inputname[N],yn[N]="0";
     int size=1;
-    int index;
+    int inputindex;
     int counter=0;
     Data *data=malloc(size*sizeof(Data));
     while(1){
         printf("enter the name: ");
-        scanf("%s",name);
-        if(strncmp(name,yn,1)==0) break;
+        scanf("%s",inputname);
+        if(strncmp(inputname,yn,1)==0) break;
         printf("enter the index: ");
-        scanf("%d",&index);
+        scanf("%d",&inputindex);
         if(counter+1==size) *data=memory(data,size);
-        strncpy(data[counter].name,name,N);
-        data[counter].index=index;
+        strncpy(data[counter].name,inputname,N);
+        inputname[0]='\0';
+        data[counter].index=inputindex;
         counter++;
     }
     char *string=constructString(data,counter);
     return string;
+}
+
+Data splitLine(char *string,Data *mydata,int cur){
+    char *token[2];
+    token[0]=strtok(string,",\0");
+    if(token[0]!=NULL) token[1]=strtok(NULL,",\0");
+    strcpy(mydata[cur].name,token[0]);
+    mydata[cur].index=atoi(token[1]);
+    return *mydata;
 }
 
 char *readfile(){
@@ -208,9 +211,8 @@ int menu()
 
 int main()
 {
-    int choice=menu();
     while(1){
-        int over=0;
+        int choice=menu();
         if(choice==1){
             char *maintring=readfile();
             while(1){
@@ -220,7 +222,6 @@ int main()
                 else if(choice==2) printf("You must first exit to input other data\n");
                 else if(choice==3) popData(maintring);
                 else if(choice==4){
-                    over=1;
                     break;
                 }
                 else printf("There is no this choice\n");
@@ -235,12 +236,14 @@ int main()
                 else if(choice==2) printf("You must first exit to input other data\n");
                 else if(choice==3) popData(maintring);
                 else if(choice==4){
-                    over=1;
                     break;
                 }
                 else printf("There is no this choice\n");
             }
         }
+        else if(choice==3) printf("You haven't input any data yet\n");
+        else if(choice==4) break;
+        else printf("There is no this choice\n");
     }
     return 0;
 }
