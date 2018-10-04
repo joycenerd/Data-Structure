@@ -151,9 +151,25 @@ char *constructString(Data *data,int howmany){
     return mainstring;
 }
 
-void inputData(){
-    int i;
-    printf("over");
+char *inputData(){
+    char name[N],yn[N]="0";
+    int size=1;
+    int index;
+    int counter=0;
+    Data *data=malloc(size*sizeof(Data));
+    while(1){
+        printf("enter the name: ");
+        scanf("%s",name);
+        if(strncmp(name,yn,1)==0) break;
+        printf("enter the index: ");
+        scanf("%d",&index);
+        if(counter+1==size) *data=memory(data,size);
+        strncpy(data[counter].name,name,N);
+        data[counter].index=index;
+        counter++;
+    }
+    char *string=constructString(data,counter);
+    return string;
 }
 
 char *readfile(){
@@ -209,13 +225,22 @@ int main()
                 }
                 else printf("There is no this choice\n");
             }
-            if(over) break;
         }
         else if(choice==2){
-            inputData();
-            break;
+            char *maintring=inputData();
+            while(1){
+                printf("\n");
+                choice=menu();
+                if(choice==1) printf("You must first exit to input other data\n");
+                else if(choice==2) printf("You must first exit to input other data\n");
+                else if(choice==3) popData(maintring);
+                else if(choice==4){
+                    over=1;
+                    break;
+                }
+                else printf("There is no this choice\n");
+            }
         }
-        
     }
     return 0;
 }
