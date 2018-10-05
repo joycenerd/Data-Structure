@@ -123,7 +123,7 @@ void popData(char *string){
 char *constructString(Data *data,int howmany){
     printf("\n");
     int i;
-    int strsize=20;
+    int strsize=N;
     char *mainstring=malloc(strsize*sizeof(char));
     int insertindex=0,charcount=0;
     for(i=0;i<howmany;i++){
