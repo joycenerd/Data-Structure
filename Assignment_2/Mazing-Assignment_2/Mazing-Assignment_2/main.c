@@ -114,7 +114,7 @@ void stackRecord(int maze[MAX_DATA][MAX_DATA]) {
         else if(round%2==1 && find_b!=0){
             frontvalue_b = readStack(top_b, stack_b);
             position_b = nextStep(frontvalue_b,maze_b,1);
-            stack_a[top_b].prevdir = position_b[2];
+            stack_b[top_b].prevdir = position_b[2];
             maze_b[position_b[0]][position_b[1]] = 1;
             if (stack_b[top_b].prevdir == 4) top_b--;
             else {
