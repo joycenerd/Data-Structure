@@ -73,6 +73,8 @@ int *readStack(int top, Stack stack[]) {
 }
 
 void stackRecord(int maze[MAX_DATA][MAX_DATA]) {
+    FILE *fout;
+    fout=fopen("result.txt","w");
     int maze_a[MAX_DATA][MAX_DATA],maze_b[MAX_DATA][MAX_DATA];
     int i,j;
     for(i=0;i<MAX_DATA;i++){
@@ -105,11 +107,14 @@ void stackRecord(int maze[MAX_DATA][MAX_DATA]) {
                 stack_a[top_a].prevdir = -1;
             }
             if (top_a == -1) {
-                printf("Stack is empty! Mouse A has no way to go out of the maze\n");
+                fprintf(fout,"Stack is empty! Mouse A has no way to go out of the maze\n");
                 find_a = 0;
             }
-            if (stack_a[top_a].row == MAX_DATA-1 && stack_a[top_a].col == MAX_DATA-1) break;
-            if(find_a)printf("ratA: (%d,%d)\n",stack_a[top_a].row,stack_a[top_a].col);
+            if (stack_a[top_a].row == MAX_DATA-1 && stack_a[top_a].col == MAX_DATA-1){
+                fprintf(fout,"ratA: (%d,%d)\n",stack_a[top_a].row,stack_a[top_a].col);
+                break;
+            }
+            if(find_a) fprintf(fout,"ratA: (%d,%d)\n",stack_a[top_a].row,stack_a[top_a].col);
         }
         else if(round%2==1 && find_b!=0){
             frontvalue_b = readStack(top_b, stack_b);
@@ -124,14 +129,18 @@ void stackRecord(int maze[MAX_DATA][MAX_DATA]) {
                 stack_b[top_b].prevdir = -1;
             }
             if (top_b == -1) {
-                printf("Stack is empty! Mouse A has no way to go out of the maze\n");
+                fprintf(fout,"Stack is empty! Mouse A has no way to go out of the maze\n");
                 find_b = 0;
             }
-            if (stack_b[top_b].row == 0 && stack_b[top_b].col == 0) break;
-            if(find_b)printf("ratB: (%d,%d)\n",stack_b[top_b].row,stack_b[top_b].col);
+            if (stack_b[top_b].row == 0 && stack_b[top_b].col == 0){
+                fprintf(fout,"ratB: (%d,%d)\n",stack_b[top_b].row,stack_b[top_b].col);
+                break;
+            }
+            if(find_b) fprintf(fout,"ratB: (%d,%d)\n",stack_b[top_b].row,stack_b[top_b].col);
         }
         round++;
     }
+    fclose(fout);
 }
 
 
@@ -147,6 +156,7 @@ int main()
         for(col=0;col<MAX_DATA;col++) maze[row][col]=line[col]-'0';
         row++;
     }
+    fclose(file);
     stackRecord(maze);
     return 0;
 }
