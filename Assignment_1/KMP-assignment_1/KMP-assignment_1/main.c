@@ -14,13 +14,11 @@
 typedef unsigned long int ui;
 
 
-// define my structure to store my data
 typedef struct{
     char name[N];
     int index;
 }Data;
 
-// delete the pattern in the mainstring if matches
 char *deleteString(char *string, int index, ui delsize){
     ui size=strlen(string);
     char *newstring=malloc(size*sizeof(char));
@@ -29,7 +27,6 @@ char *deleteString(char *string, int index, ui delsize){
     return newstring;
 }
 
-// string matching using failure function to speed up the matching process
 int KMPmatcher(char *string, char *pattern, int failure[]){
     ui stringlen=strlen(string);
     ui patlen=strlen(pattern);
@@ -41,7 +38,6 @@ int KMPmatcher(char *string, char *pattern, int failure[]){
         else if(patindex==0) strindex++;
         else patindex=failure[patindex-1];
     }
-    // if match return the first index of the pattern in the mainstring, else return -1 as not found
     if(patindex==patlen){
         int location=strindex-(int)patlen;
         return location;
@@ -49,7 +45,6 @@ int KMPmatcher(char *string, char *pattern, int failure[]){
     else return -1;
 }
 
-// failure function
 int *failFunc(char *pattern,ui len){
     int i,j;
     static int fail[N];
@@ -94,15 +89,12 @@ int *failFunc(char *pattern,ui len){
     return fail;
 }
 
-// Pop Data include find the pattern's failure function, string matching, and output the rest of mainstring after deleting the pattern from the mainstring
 void popData(char *string){
     printf("enter your searching pattern: ");
     char pattern[N];
-    // input the searching pattern
     scanf("%s",pattern);
     ui patlen=strlen(pattern);
     int *lsp;
-    // finding the pattern's failure function
     lsp=failFunc(pattern, patlen);
     printf("lsp= [");
     for(int i=0;i<patlen;i++){
@@ -110,20 +102,17 @@ void popData(char *string){
         else printf(", %d",*(lsp+i));
     }
     printf("]\n");
-    // matching the mainstring and pattern
     int index=KMPmatcher(string, pattern, lsp);
     char *remainstr = NULL;
-    // if match output the string after deleting the pattern from the mainstring, else print out the complete mainstring
     if(index==-1) remainstr=deleteString(string,0,0);
     else remainstr=deleteString(string,index,patlen);
     printf("the remaining string is: %s\n",remainstr);
 }
 
-// after putting my data into sturcture, consturct the mainstring according to name string and the index it's inserting in
 char *constructString(Data *data,int howmany){
     printf("\n");
     int i;
-    int strsize=N;
+    int strsize=20;
     char *mainstring=malloc(strsize*sizeof(char));
     int insertindex=0,charcount=0;
     for(i=0;i<howmany;i++){
@@ -135,8 +124,6 @@ char *constructString(Data *data,int howmany){
             char *reallstr=realloc(mainstring,strsize*sizeof(char));
             mainstring=reallstr;
         }
-        // string insertion include string concatenation and I choose to use string copy.
-        //original string + insetion string(from some index) + the rest of original string
         char *tempstr=malloc(strsize*sizeof(char));
         strncpy(tempstr,mainstring,strsize);
         strncpy(mainstring, tempstr, insertindex);
@@ -150,7 +137,6 @@ char *constructString(Data *data,int howmany){
     return mainstring;
 }
 
-// doing sturcture memory realloction
 Data memory(Data *mydata,int size){
     size*=2;
     Data *reallstruct=realloc(mydata,size*sizeof(Data));
@@ -158,22 +144,18 @@ Data memory(Data *mydata,int size){
     return *mydata;
 }
 
-// choice 2 input data using command line
 char *inputData(){
     char inputname[N],yn[N]="0";
     int size=1;
     int inputindex;
     int counter=0;
-    // structure for my datasets
     Data *data=malloc(size*sizeof(Data));
     while(1){
         printf("enter the name: ");
         scanf("%s",inputname);
-        // if input is 0 then I know input come to an end
         if(strncmp(inputname,yn,1)==0) break;
         printf("enter the index: ");
         scanf("%d",&inputindex);
-        // write my input data to my structure
         if(counter+1==size) *data=memory(data,size);
         strncpy(data[counter].name,inputname,N);
         inputname[0]='\0';
@@ -184,7 +166,6 @@ char *inputData(){
     return string;
 }
 
-// every line of csv file contains name and index, and this function is separate name and index and put into my structure
 Data splitLine(char *string,Data *mydata,int cur){
     char *token[2];
     token[0]=strtok(string,",\0");
@@ -194,7 +175,6 @@ Data splitLine(char *string,Data *mydata,int cur){
     return *mydata;
 }
 
-// choice 1 read csv file
 char *readfile(){
     printf("enter your filename and path: ");
     char filename[N];
@@ -205,15 +185,12 @@ char *readfile(){
     char line[N];
     int structsize=1;
     int counting=0;
-    // the datasets in csv file will go into the structure, using malloc and realloc to save memory
     Data *data=malloc(structsize*sizeof(Data));
     while(fgets(line,N,file)!=NULL){
         if(counting==structsize) *data=memory(data,structsize);
-        // parsing my string in my file
         *data=splitLine(line,data,counting);
         counting++;
     }
-    // construct mainstring after putting all my data into my structure
     char *mymainstring=constructString(data,counting);
     return mymainstring;
 }
@@ -234,10 +211,8 @@ int menu()
 
 int main()
 {
-    // choose what you want to do with the program
     while(1){
         int choice=menu();
-        // choice 1 is to read the data from a file and do things with the data
         if(choice==1){
             char *maintring=readfile();
             while(1){
@@ -252,7 +227,6 @@ int main()
                 else printf("There is no this choice\n");
             }
         }
-        // choice 2 is to input data from the command line
         else if(choice==2){
             char *maintring=inputData();
             while(1){
