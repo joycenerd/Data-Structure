@@ -14,20 +14,23 @@
 typedef unsigned long int ui;
 
 
+// record my nodes
 typedef struct listnode *listptr;
 typedef struct listnode{
-    char data[MAX_LEN];
-    int mark;
-    listptr rlink;
-    listptr llink;
+    char data[MAX_LEN]; // store my data (name)
+    int mark; // check if the node is delete from my list
+    listptr rlink; // clockwise
+    listptr llink; // counterclockwise
 }List;
 
+// the main operation of the russian roulette game
+// pop out data until the only survivior
 void russianRoulette(int dir,listptr ptr,int total){
     printf("Input skip number: ");
     int skip;
     scanf("%d",&skip);
     int counter;
-    if(dir==1){
+    if(dir==1){ // right
         do{
             printf("list length is: %d\n",total);
             for(counter=0;counter<=skip;counter++){
@@ -41,7 +44,8 @@ void russianRoulette(int dir,listptr ptr,int total){
         while(ptr->mark) ptr=ptr->rlink;
         printf("the last data is: %s\n",ptr->data);
     }
-    else if(dir==2){
+    else if(dir==2){ // left
+        ptr=ptr->llink;
         do{
             printf("list length is: %d\n",total);
             for(counter=0;counter<=skip;counter++){
@@ -57,6 +61,7 @@ void russianRoulette(int dir,listptr ptr,int total){
     }
 }
 
+// choose the direction
 int directionMenu(){
     printf("choose your direction: \n");
     printf("(1) right\n");
@@ -70,6 +75,9 @@ int directionMenu(){
     return dir;
 }
 
+// invert my linked list (left direction)
+// current is the head of the original linked list, trail is the node which
+// rlink point to current
 listptr invertList(listptr current,listptr trail){
     listptr head=current;
     do{
@@ -80,10 +88,13 @@ listptr invertList(listptr current,listptr trail){
     return head;
 }
 
+// linked all my data
 listptr createList(listptr ptr, char *data,ui len){
     listptr node=malloc(sizeof(List));
     strncpy(node->data,data,len-1);
+    // node->mark if to see if the node has been pop
     node->mark=0;
+    // linked in direction right
     if(!ptr){
         ptr=node;
         ptr->rlink=ptr;
@@ -116,12 +127,14 @@ listptr inputData(){
     return head;
 }
 
+// read the data from the file
 listptr readData(){
     FILE *fp;
     fp=fopen("data.csv","r");
     assert(fp!=NULL);
     char line[MAX_LEN];
     listptr ptr=NULL,head=NULL;
+    // create linked list (right direction)
     while(fgets(line,MAX_LEN,fp)!=NULL){
         ui len=strlen(line)-1;
         if(!ptr){
@@ -130,10 +143,12 @@ listptr readData(){
         }
         else ptr=createList(ptr, line,len);
     }
+    // invert my linked list (left direction)
     head=invertList(head,ptr);
     return head;
 }
 
+// choose what to do with the program
 int menu(){
     printf("What do you want to do?\n");
     printf("(1) Read data from a file\n");
@@ -155,6 +170,11 @@ int main()
         else if(choice==2){
             ptr=inputData();
         }
+        else if(choice==0) break;
+        else{
+            printf("There is no this choice\n");
+            continue;
+        }
         listptr start=ptr;
         if(ptr==NULL){
             printf("The list is empty\n");
@@ -172,6 +192,6 @@ int main()
         printf("\n");
         int dir=directionMenu();
         russianRoulette(dir,ptr,totalnode);
-        break;
     }
+    return 0;
 }
