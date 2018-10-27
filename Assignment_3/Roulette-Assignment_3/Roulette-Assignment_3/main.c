@@ -59,6 +59,11 @@ void russianRoulette(int dir,listptr ptr,int total){
         while(ptr->mark) ptr=ptr->llink;
         printf("the last data is: %s\n",ptr->data);
     }
+    while(ptr){
+        listptr temp=ptr;
+        ptr=ptr->rlink;
+        free(temp);
+    }
 }
 
 // choose the direction
