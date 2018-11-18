@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#define N 200
 
 typedef struct treenode *treeptr;
 typedef struct treenode{
@@ -15,6 +16,27 @@ typedef struct treenode{
     treeptr lchild;
     treeptr rchild;
 }Node;
+
+void levelOrder(treeptr ptr){
+    treeptr que[N];
+    int front=-1,rear=-1;
+    que[++rear]=ptr;
+    while(front!=rear){
+        treeptr pop=que[++front];
+        printf("%d ",pop->data);
+        if(pop->lchild) que[++rear]=pop->lchild;
+        if(pop->rchild) que[++rear]=pop->rchild;
+    }
+    printf("\n");
+}
+
+void inorder(treeptr ptr){
+    if(ptr){
+        inorder(ptr->lchild);
+        printf("%d ",ptr->data);
+        inorder(ptr->rchild);
+    }
+}
 
 int search(treeptr head,int num){
     while(head){
@@ -28,31 +50,46 @@ int search(treeptr head,int num){
 treeptr delete(treeptr head,int num){
     int find=search(head,num);
     if(find==1){
-        treeptr parent=NULL;
-        while(head){
-            if(num<head->data){
-                parent=head;
+        treeptr cur=head,parent=NULL;
+        while(cur){
+            if(num<cur->data){
+                parent=cur;
+                cur=cur->lchild;
+            }
+            else if(num>cur->data){
+                parent=cur;
+                cur=cur->rchild;
+            }
+            else break;
+        }
+        treeptr tmp=cur,delnode;
+        if(tmp->rchild==NULL){
+            if(parent==NULL){
+                delnode=head;
                 head=head->lchild;
+                free(delnode);
             }
-            else if(num>head->data){
-                parent=head;
-                head=head->rchild;
+            else if(parent->lchild==tmp){
+                delnode=tmp;
+                parent->lchild=tmp->lchild;
+                free(delnode);
             }
-            else if(num==head->data){
-                treeptr ptr;
-                if(!parent){
-                    ptr=head;
-                    ptr=ptr->rchild;
-                    if(ptr==NULL) head=head->lchild;
-                    else{
-                        while(ptr->lchild) ptr=ptr->lchild;
-                        head->data=ptr->data;
-                        ptr=NULL;
-                    }
-                }
+            else if(parent->rchild==tmp){
+                delnode=tmp;
+                parent->rchild=tmp->lchild;
+                free(delnode);
             }
         }
+        else{
+            tmp=tmp->rchild;
+            while(tmp->lchild) tmp=tmp->lchild;
+            cur->data=tmp->data;
+            tmp=NULL;
+        }
+        printf("Number %d is deleted.\n",num);
     }
+    else printf("Number not found.\n");
+    return head;
 }
 
 treeptr insert(treeptr head,int num){
@@ -118,6 +155,20 @@ void BST(){
             printf("Enter a number to delete: ");
             scanf("%d",&num);
             head=delete(head,num);
+        }
+        else if(choice=='S' || choice=='s'){
+            printf("Enter the element to search: ");
+            scanf("%d",&num);
+            int find=search(head,num);
+            if(find==1) printf("BINGO! Number is found.\n");
+            else printf("SORRY. Number not found.\n");
+        }
+        else if(choice=='P' || choice=='p'){
+            printf("The tree in infix order: ");
+            inorder(head);
+            printf("\n");
+            printf("The tree in level order: ");
+            levelOrder(head);
         }
     }
 }
