@@ -8,6 +8,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdlib.h>
+#include <assert.h>
 #define N 200
 
 typedef struct treenode *treeptr;
@@ -47,8 +49,9 @@ int search(treeptr head,int num){
     return -1;
 }
 
-treeptr delete(treeptr head,int num){
-    int find=search(head,num);
+treeptr delete(treeptr head,int num,int id){
+    int find=1;
+    if(id) find=search(head,num);
     if(find==1){
         treeptr cur=head,parent=NULL;
         while(cur){
@@ -92,13 +95,13 @@ treeptr delete(treeptr head,int num){
     return head;
 }
 
-treeptr insert(treeptr head,int num){
+treeptr insert(treeptr head,int num,int id){
     treeptr node=malloc(sizeof(Node));
     node->data=num;
     node->lchild=node->rchild=NULL;
     if(!head){
         head=node;
-        printf("Number %d is inserted.\n",num);
+        if(id) printf("Number %d is inserted.\n",num);
     }
     else{
         treeptr ptr=head;
@@ -106,7 +109,7 @@ treeptr insert(treeptr head,int num){
             if(num<ptr->data){
                 if(ptr->lchild==NULL){
                     ptr->lchild=node;
-                    printf("Number %d is inserted.\n",num);
+                    if(id) printf("Number %d is inserted.\n",num);
                     break;
                 }
                 else ptr=ptr->lchild;
@@ -114,19 +117,27 @@ treeptr insert(treeptr head,int num){
             else if(num>ptr->data){
                 if(ptr->rchild==NULL){
                     ptr->rchild=node;
-                    printf("Number %d is inserted.\n",num);
+                    if(id) printf("Number %d is inserted.\n",num);
                     break;
                 }
                 else ptr=ptr->rchild;
             }
             else if(num==ptr->data){
                 free(node);
-                printf("Error. Number %d exists.\n",num);
+                if(id) printf("Error. Number %d exists.\n",num);
                 break;
             }
         }
     }
     return head;
+}
+
+void treasureHunt(){
+    printf("Please input the map file: ");
+    char filename[N];
+    scanf("%s",filename);
+    FILE *file=fopen(filename,"r");
+    assert(file!=NULL);
 }
 
 char bstMenu(){
@@ -149,12 +160,12 @@ void BST(){
         if(choice=='I' || choice=='i'){
             printf("Enter a number: ");
             scanf("%d",&num);
-            head=insert(head,num);
+            head=insert(head,num,1);
         }
         else if(choice=='D' || choice=='d'){
             printf("Enter a number to delete: ");
             scanf("%d",&num);
-            head=delete(head,num);
+            head=delete(head,num,1);
         }
         else if(choice=='S' || choice=='s'){
             printf("Enter the element to search: ");
@@ -170,6 +181,7 @@ void BST(){
             printf("The tree in level order: ");
             levelOrder(head);
         }
+        else if(choice=='r' ||choice=='R') break;
     }
 }
 
@@ -188,5 +200,6 @@ int main()
     while(1){
         int choice=mainMenu();
         if(choice==1) BST();
+        else if(choice==2) treasureHunt();
     }
 }
