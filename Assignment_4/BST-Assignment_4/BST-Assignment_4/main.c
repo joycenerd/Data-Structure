@@ -16,6 +16,45 @@ typedef struct treenode{
     treeptr rchild;
 }Node;
 
+int search(treeptr head,int num){
+    while(head){
+        if(num<head->data) head=head->lchild;
+        else if(num>head->data) head=head->rchild;
+        else if(num==head->data) return 1;
+    }
+    return -1;
+}
+
+treeptr delete(treeptr head,int num){
+    int find=search(head,num);
+    if(find==1){
+        treeptr parent=NULL;
+        while(head){
+            if(num<head->data){
+                parent=head;
+                head=head->lchild;
+            }
+            else if(num>head->data){
+                parent=head;
+                head=head->rchild;
+            }
+            else if(num==head->data){
+                treeptr ptr;
+                if(!parent){
+                    ptr=head;
+                    ptr=ptr->rchild;
+                    if(ptr==NULL) head=head->lchild;
+                    else{
+                        while(ptr->lchild) ptr=ptr->lchild;
+                        head->data=ptr->data;
+                        ptr=NULL;
+                    }
+                }
+            }
+        }
+    }
+}
+
 treeptr insert(treeptr head,int num){
     treeptr node=malloc(sizeof(Node));
     node->data=num;
@@ -68,12 +107,17 @@ char bstMenu(){
 void BST(){
     treeptr head=NULL;
     while(1){
+        int num;
         char choice=bstMenu();
         if(choice=='I' || choice=='i'){
             printf("Enter a number: ");
-            int num;
             scanf("%d",&num);
             head=insert(head,num);
+        }
+        else if(choice=='D' || choice=='d'){
+            printf("Enter a number to delete: ");
+            scanf("%d",&num);
+            head=delete(head,num);
         }
     }
 }
