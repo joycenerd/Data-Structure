@@ -8,9 +8,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdlib.h>
+#include <string.h>
 #include <assert.h>
 #define N 200
+typedef unsigned long int ui;
 
 typedef struct treenode *treeptr;
 typedef struct treenode{
@@ -95,6 +96,27 @@ treeptr delete(treeptr head,int num,int id){
     return head;
 }
 
+treeptr bombSearchDel(treeptr head,int bomb){
+    treeptr que[N];
+    int front=-1,rear=-1;
+    que[++rear]=head;
+    while(front!=rear){
+        treeptr pop=que[++front];
+        char str[N];
+        sprintf(str,"%d",pop->data);
+        ui len=strlen(str); int i;
+        for(i=0;i<len;i++){
+            if(str[i]-'0'==bomb){
+                head=delete(head,pop->data,0);
+                break;
+            }
+        }
+        if(pop->lchild) que[++rear]=pop->lchild;
+        if(pop->rchild) que[++rear]=pop->rchild;
+    }
+    return head;
+}
+
 treeptr insert(treeptr head,int num,int id){
     treeptr node=malloc(sizeof(Node));
     node->data=num;
@@ -138,6 +160,22 @@ void treasureHunt(){
     scanf("%s",filename);
     FILE *file=fopen(filename,"r");
     assert(file!=NULL);
+    int num;
+    treeptr head=NULL;
+    while(!feof(file)){
+        fscanf(file,"%d",&num);
+        head=insert(head,num,0);
+    }
+    printf("Load file success.\n");
+    int key,treasure,bomb;
+    printf("Please input the key location: ");
+    scanf("%d",&key);
+    printf("Please input the treasure location: ");
+    scanf("%d",&treasure);
+    printf("Please input the bomb number (0~9): ");
+    scanf("%d",&bomb);
+    head=bombSearchDel(head,bomb);
+    //treeptr stack=findKey(head,key);
 }
 
 char bstMenu(){
