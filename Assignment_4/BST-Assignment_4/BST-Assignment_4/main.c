@@ -20,6 +20,18 @@ typedef struct treenode{
     treeptr rchild;
 }Node;
 
+treeptr stack[N]={NULL};
+int findKey(treeptr head, int key){
+    int top=-1;
+    while(head){
+        stack[++top]=head;
+        if(key==head->data) return top;
+        else if(key<head->data) head=head->lchild;
+        else if(key>head->data) head=head->rchild;
+    }
+    return top;
+}
+
 void levelOrder(treeptr ptr){
     treeptr que[N];
     int front=-1,rear=-1;
@@ -175,7 +187,7 @@ void treasureHunt(){
     printf("Please input the bomb number (0~9): ");
     scanf("%d",&bomb);
     head=bombSearchDel(head,bomb);
-    //treeptr stack=findKey(head,key);
+    int top=findKey(head,key);
 }
 
 char bstMenu(){
