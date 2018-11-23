@@ -20,17 +20,7 @@ typedef struct treenode{
     treeptr rchild;
 }Node;
 
-treeptr stack[N]={NULL};
-int findKey(treeptr head, int key){
-    int top=-1;
-    while(head){
-        stack[++top]=head;
-        if(key==head->data) return top;
-        else if(key<head->data) head=head->lchild;
-        else if(key>head->data) head=head->rchild;
-    }
-    return top;
-}
+treeptr keystack[N]={NULL};
 
 void levelOrder(treeptr ptr){
     treeptr que[N];
@@ -60,6 +50,53 @@ int search(treeptr head,int num){
         else if(num==head->data) return 1;
     }
     return -1;
+}
+
+void findTreasure(treeptr head,int treasure,int top){
+    int i;
+    int find=search(head,treasure);
+    if(find==-1){
+        printf("Adventurer only found the key.\nPath:");
+        for(i=0;i<=top;i++) printf("%d->",keystack[i]->data);
+        printf("Not found treasure.\n");
+    }
+    else{
+        printf("Adventurer successfully found the treasure.\n");
+        for(i=0;i<=top;i++) printf("%d->",keystack[i]->data);
+        if(treasure>=head->data){
+            top--;
+            while(top--){
+                if(top==0) printf("%d",keystack[top]->data);
+                else printf("%d->",keystack[top]->data);
+            }
+            if(treasure>head){
+                head=head->rchild;
+                while(treasure!=head->data){
+                    printf("->%d",head->data);
+                    if(treasure<head->data) head=head->lchild;
+                    else if(treasure>head->data) head=head->rchild;
+                }
+                printf("->%d",head->data);
+            }
+            printf("\n");
+        }
+        treeptr cur=keystack[top--];
+        int check=0;
+        while(top!=-1 && !check){
+            
+        }
+    }
+}
+
+int findKey(treeptr head, int key){
+    int top=-1;
+    while(head){
+        keystack[++top]=head;
+        if(key==head->data) return top;
+        else if(key<head->data) head=head->lchild;
+        else if(key>head->data) head=head->rchild;
+    }
+    return top;
 }
 
 treeptr delete(treeptr head,int num,int id){
@@ -188,6 +225,8 @@ void treasureHunt(){
     scanf("%d",&bomb);
     head=bombSearchDel(head,bomb);
     int top=findKey(head,key);
+    if(top==-1) printf("Not found key!\n");
+    else findTreasure(head,treasure,top);
 }
 
 char bstMenu(){
