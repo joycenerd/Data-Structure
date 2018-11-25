@@ -4,7 +4,7 @@
 
 This is a small C program playing Russian Roulette. Implement some data, linked them togeter as a roulette. Choose the direction for spinning, and a skipping number. Skip the amount node to and mark the pop out data, continue this process until there is only one node in the roulette.
 
-### How to use this preogram? ###
+### How to use this program? ###
 
 1. put the data file and the main program in the same folder
 2. choose what to do with the program
