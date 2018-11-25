@@ -11,7 +11,7 @@ Two function in this program.
 
 Three option in the main menu.
 
-	1. Binary Search Tree
+1. Binary Search Tree
 
 		Get into binary search tree program
 
