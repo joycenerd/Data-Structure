@@ -57,21 +57,29 @@ int search(treeptr head,int num){
     return -1;
 }
 
+// find the treasure
 void findTreasure(treeptr head,int treasure,int top,int key){
     int i;
+    // check if treasure is in BST, if not then no need to traverse BST and output the path
+    // just print out not found treasure and the path of finding key
     int find=search(head,treasure);
     if(find==-1){
         printf("Adventurer only found the key.\nPath:");
         for(i=0;i<=top;i++) printf("%d->",keystack[i]->data);
         printf("Not found treasure.\n");
     }
+    // treasure is in BST
     else{
         printf("Adventurer successfully found the treasure.\n");
         printf("Shortest path to find the treasure:\n");
+        // output the key path according to stack we create in findKey
         for(i=0;i<=top;i++){
             if(i==0) printf("%d",keystack[i]->data);
             else printf("->%d",keystack[i]->data);
         }
+        // if treasure and key is in the different subtree using root as reference point
+        // first go back to the root from key location
+        // then find the treasure from the root
         if(treasure>=head->data && key<head->data){
             while(top--) printf("->%d",keystack[top]->data);
             if(treasure>head->data){
@@ -98,6 +106,7 @@ void findTreasure(treeptr head,int treasure,int top,int key){
             }
             printf("\n");
         }
+        // if key is root, then search BST to find treasure
         else if(key==head->data){
             while(treasure!=head->data){
                 if(treasure<head->data) head=head->lchild;
@@ -106,31 +115,41 @@ void findTreasure(treeptr head,int treasure,int top,int key){
             }
             printf("\n");
         }
+        // if treasure and key is in the same subtree using root as reference point
+        // using the keystack, pop out one node at a time
+        // from that point traverse that subtree try to find treasure
+        // if not found then keep popping out node and traverse
+        // output the whole path at last
         else{
             treeptr cur=keystack[top--];
             int check=-1;
             while(top!=-1 && check==-1){
+                // using search to check if treasure is in the subtree
+                // if not don't waste time to traverse the path
                 check=search(cur,treasure);
+                // if treasure is in the subtree, traverse and output the path
                 if(check==1){
                     while(cur){
                         if(treasure==cur->data){
                             printf("\n");
-                                break;
-                            }
-                            else if(treasure<cur->data) cur=cur->lchild;
-                            else if(treasure>cur->data) cur=cur->rchild;
-                            printf("->%d",cur->data);
+                            break;
                         }
-                    }
-                    else{
-                        cur=keystack[top--];
+                        else if(treasure<cur->data) cur=cur->lchild;
+                        else if(treasure>cur->data) cur=cur->rchild;
                         printf("->%d",cur->data);
                     }
                 }
+                else{
+                    cur=keystack[top--];
+                    printf("->%d",cur->data);
+                }
             }
+        }
     }
 }
 
+// finding method of key is same as searching in BST
+// But record the path using a stack, it will be use in finding treasure later on
 int findKey(treeptr head, int key){
     int top=-1;
     while(head){
@@ -213,6 +232,7 @@ treeptr delete(treeptr head,int num,int id){
 }
 
 // search the bomb and delete it from BST
+// traverse BST using level order
 treeptr bombSearchDel(treeptr head,int bomb){
     treeptr que[N];
     int front=-1,rear=-1;
@@ -307,8 +327,11 @@ void treasureHunt(){
     scanf("%d",&bomb);
     // bomb are the node's needs to delete
     head=bombSearchDel(head,bomb);
+    // find the key int the tree
     int top=findKey(head,key);
+    // if the key is already deleted because if the bomb, then output not found key
     if(top==-1) printf("Not found key!\n");
+    // if the key is found then go find the treasure
     else findTreasure(head,treasure,top,key);
 }
 
