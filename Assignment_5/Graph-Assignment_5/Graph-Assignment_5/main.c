@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <stdlib.h>
 #define N 20
 typedef unsigned long int ui;
 
@@ -18,6 +19,12 @@ typedef struct{
     int weight;
     int mark;
 }Graph;
+
+int cmp(const void *a, const void *b){
+    int l = ((Graph *)a)->weight;
+    int r = ((Graph *)b)->weight;
+    return (l - r);
+}
 
 void kruskal(FILE *fin){
     Graph graph[N];
@@ -29,12 +36,20 @@ void kruskal(FILE *fin){
     for(i=0;i<totalnodes;i++){
         for(j=0;j<totalnodes;j++){
             fscanf(fin,"%d",&edge[i][j]);
-            if(edge[i][j]!=0){
+            if(j<i && edge[i][j]!=0){
                 graph[count].vertex1=i;
                 graph[count].vertex2=j;
+                graph[count].mark=0;
                 graph[count++].weight=edge[i][j];
             }
         }
+    }
+    qsort(graph,count,sizeof(Graph),cmp);
+    int arr[N];
+    for(i=0;i<totalnodes;i++) arr[i]=-1;
+    int edgecount=0,cur=0;
+    while(edgecount<totalnodes-1){
+        
     }
 }
 
