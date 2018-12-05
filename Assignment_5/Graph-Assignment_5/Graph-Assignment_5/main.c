@@ -20,13 +20,32 @@ typedef struct{
     int mark;
 }Graph;
 
+int *maintainSubset(int v,int w,int arr[],int totalnodes){
+    int i;
+    if(arr[v]<0 && arr[w]<0){
+        arr[v]+=arr[w];
+        for(i=0;i<totalnodes;i++){
+            if(arr[i]==w) arr[i]=v;
+        }
+        arr[w]=v;
+    }
+    return arr;
+}
+
+int checkInSub(int v,int w, int arr[],int totalnodes){
+    if(arr[v]<0 && arr[w]<0) return 1;
+    else if(v==arr[w]) return -1;
+    else if(w==arr[v]) return -1;
+    else return 1;
+}
+
 int cmp(const void *a, const void *b){
     int l = ((Graph *)a)->weight;
     int r = ((Graph *)b)->weight;
     return (l - r);
 }
 
-void kruskal(FILE *fin){
+void Kruskal(FILE *fin){
     Graph graph[N];
     int totalnodes;
     fscanf(fin,"%d",&totalnodes);
@@ -45,11 +64,17 @@ void kruskal(FILE *fin){
         }
     }
     qsort(graph,count,sizeof(Graph),cmp);
-    int arr[N];
-    for(i=0;i<totalnodes;i++) arr[i]=-1;
+    int subset[N];
+    for(i=0;i<totalnodes;i++) subset[i]=-1;
     int edgecount=0,cur=0;
     while(edgecount<totalnodes-1){
-        
+        v=graph[cur].vertex1-1;
+        w=graph[cur].vertex2-1;
+        int check=checkInSub(v, w, subset, totalnodes);
+        if(check==1){
+            printf("Edge %d: (%d,%d) cost: %d",edgecount,v+1,w+1,edge[v+1][w+1]);
+            *subset=*maintainSubset(v,w,subset,totalnodes);
+        }
     }
 }
 
@@ -76,6 +101,6 @@ int main()
         for(i=0;i<len-1;i++) filename[i]=str[i];
         FILE *fin=fopen(filename,"r");
         assert(fin!=NULL);
-        if(choice==1) kruskal(fin);
+        if(choice==1) Kruskal(fin);
     }
 }
