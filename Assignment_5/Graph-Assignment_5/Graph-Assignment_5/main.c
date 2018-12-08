@@ -258,7 +258,7 @@ int main()
         if(choice==4) break;
         printf("please enter your file: ");
         // read file
-        char str[N],filename[N];
+        char str[N],filename[N]={"\0"};
         scanf("\n");
         fgets(str,N,stdin);
         ui len=strlen(str);
