@@ -115,6 +115,7 @@ void selectionSort(int arr[], int n){
     printf("Total step: %d\n\n",n);
 }
 
+// main menu of the program
 int menu(){
     int choice;
     printf("(1)Do sorting\n");
@@ -127,9 +128,12 @@ int menu(){
 int main()
 {
     while(1){
+        // choose what to do in this program
         int choice=menu();
+        // exit program if enter 0
         if(choice==0) break;
         else if(choice==1){
+            // enter filename
             printf("Enter your file to do sorting: ");
             char str[N],filename[N]={"\0"};
             scanf("\n");
@@ -139,18 +143,23 @@ int main()
             for(i=0;i<len-1;i++) filename[i]=str[i];
             FILE *file=fopen(filename,"r");
             assert(file!=NULL);
+            // define array for the input data
             int arrlength=0;
             int arr[MAX_ARRAY];
             while(!feof(file)) fscanf(file,"%d",&arr[arrlength++]);
+            // print the original data
             printf("Input array:\n");
             for(i=0;i<arrlength;i++){
                 if(i==arrlength-1) printf("%3d\n\n",arr[i]);
                 else printf("%3d ",arr[i]);
             }
+            // doing swap will change the memory of the array
+            // before calling any sorting array first copy the original data
             int selectarr[MAX_ARRAY],bubblearr[MAX_ARRAY],insertarr[MAX_ARRAY],quickarr[MAX_ARRAY];
             for(i=0;i<arrlength;i++){
                 selectarr[i]=bubblearr[i]=insertarr[i]=quickarr[i]=arr[i];
             }
+            // calling sorting algorithm
             selectionSort(selectarr,arrlength);
             bubbleSort(bubblearr,arrlength);
             insertionSort(insertarr,arrlength);
