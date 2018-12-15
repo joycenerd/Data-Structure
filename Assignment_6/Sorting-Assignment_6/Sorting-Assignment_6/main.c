@@ -164,7 +164,7 @@ int main()
         // choose what to do in this program
         int choice=menu();
         // exit program if enter 0
-        if(choice==0) break;
+        if(choice==2) break;
         else if(choice==1){
             // enter filename
             printf("Enter your file to do sorting: ");
