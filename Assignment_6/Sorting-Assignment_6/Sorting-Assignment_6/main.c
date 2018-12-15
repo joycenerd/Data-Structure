@@ -152,7 +152,7 @@ void selectionSort(int arr[], int n){
 int menu(){
     int choice;
     printf("(1)Do sorting\n");
-    printf("(0)Exit\n");
+    printf("(2)Exit\n");
     printf("Enter your choice: ");
     scanf("%d",&choice);
     return choice;
