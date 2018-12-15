@@ -30,3 +30,6 @@ Four options in the main menu:
 	* If the file isn't found, the program will exit with error message "Assertion failed: (file!=NULL)"
 	* You will be ask to enter the starting node and the ending node with one space between these two numbers.
 	*  If the starting node isn't a node in the graph or the ending node isn't a node in the graph the output will be "Invalid starting/ending node". Else if there is no path from starting node to the ending node, the output will be "-1". Else the output will be the minimum cost from starting node to the ending node.
+
+4.  Exit
+    Choose this option if you want to exit the program
